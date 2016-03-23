@@ -1,0 +1,77 @@
+/* Program's name: CATCL.CLLE                         */
+/* Author:         Anh Khoi Do                        */
+/* Version:        1.0 2016-03-23                     */
+/*                                                    */
+/* Description: This CLLE program asks an owner to in-*/
+/*              put the name of his/her cat as well   */
+/*              as his/her name. The program takes 4  */
+/*              parameters: the cat's name, the       */
+/*              owner's name, the desired output and  */
+/*              the decision to show the owner's name.*/
+/*              The file also communicates with the   */
+/*              QCMDSRC/CATCM.cmd file.               */
+/* -------------------------------------------------  */
+
+PGM (&CATNAME &YOURNAME &OUTPUT &SHOWNAME)
+
+             /* --------------------------------------- */
+             /* 1. Declaration of a link with a display */
+             /* file named QDDSSRC/CATDS.DSPF.          */
+             /* --------------------------------------- */
+             DCLF  CATDS
+
+             /* --------------------------------------  */
+             /* 2. Declaration of two variables that    */
+             /* takes care of what is displayed in the  */
+             /* display file named QDDSSRC/CATDS.DSPF.  */
+             /* --------------------------------------- */
+             DCL &YOURNAME  TYPE(*CHAR) LEN(20)
+             DCL &OUTPUT    TYPE(*CHAR) LEN(9)
+             DCL &SHOWNAME  TYPE(*CHAR) LEN(4)
+             DCL &DSPLINE   TYPE(*CHAR) LEN(10) VALUE('Your name:')
+
+             /* --------------------------------------- */
+             /* The select statement that determines    */
+             /* what will be displayed on screen.       */
+             /* --------------------------------------- */
+             SELECT
+
+                /* ------------------------------------ */
+                /* If the user enters *MSGLINE in the   */
+                /* field for the desired output, then   */
+                /* send a message to the program and    */
+                /* display it below the main screen's   */
+                /* command line.                        */
+                /* ------------------------------------ */
+                WHEN (&OUTPUT = '*MSGLINE') DO
+                   IF (&SHOWNAME = '*YES') DO
+                      SNDPGMMSG MSG('Your name is' *BCAT &YOURNAME    +
+                               *BCAT ' and your cat is named' *BCAT   +
+                               &CATNAME)
+                   ENDDO
+
+                   ELSE  DO
+                      SNDPGMMSG MSG('You have a cat named:' *BCAT &CATNAME)
+                   ENDDO
+                ENDDO
+
+                WHEN (&OUTPUT = '*DISPLAY') DO
+                   IF (&SHOWNAME = '*YES') DO
+                      CHGVAR &IN03 '1'
+                      CHGVAR VAR(&OPTIONAL) VALUE(&DSPLINE)
+                      CHGVAR VAR(&OWNRNAME) VALUE(&YOURNAME)
+                   ENDDO
+
+                   ELSE  DO
+                      CHGVAR &IN03 '0'
+                   ENDDO
+
+                   SNDRCVF RCDFMT(RECORD1)
+                ENDDO
+             ENDSELECT
+
+
+/* -------------------------------------- */
+/* Declaration of the end of the program. */
+/* -------------------------------------- */
+ENDPGM 
