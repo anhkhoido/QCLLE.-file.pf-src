@@ -1,0 +1,21 @@
+/* Program name........ STARTUP.CLLE              */                            
+/* Container........... QCLLESRC                  */                            
+/* Author.............. Anh Khoi Do               */                            
+/* Date of creation.... February 08, 2016         */                            
+/*                                                */                            
+/* Program's purpose... Call a program            */                            
+/*                      named STRJOB, which is    */                            
+/*                      located in the QGPL       */                            
+/*                      library; add IBC233LIB to */                            
+/*                      user portion of my        */                            
+/*                      library; display the      */                            
+/*                      level. Send the output to */                            
+/*                      *DISPLAY.                 */                            
+             PGM                                                                
+             CALL       STRJOB                                                  
+             ADDLIBLE   IBC233LIB                                               
+             ADDLIBLE   SENECAPAY                                               
+             MONMSG     MSGID(CPF2103)                                          
+             DSPSYSLVL  *DISPLAY                                                
+             MONMSG     MSGID(MCH1987)                                          
+             ENDPGM                                                              
