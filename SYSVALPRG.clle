@@ -1,0 +1,16 @@
+/*****************************************************************/
+/* Program's name...................... SYSVALRPG                */
+/* Author.............................. Anh Khoi Do              */
+/* Version............................. 1.0 2016-04-14           */
+/* Description......................... This program display the */
+/*                                      system values.           */
+/*****************************************************************/
+PGM
+    DSPLIBL
+    DSPSYSVAL QSYSLIBL
+    DSPSYSVAL QUSRLIBL
+    DSPSYSVAL QMODEL
+ENDPGM
+
+
+ 
