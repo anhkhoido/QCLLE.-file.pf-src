@@ -1,0 +1,149 @@
+/* Program's name................... LAB4CL.CLLE                          */
+/* Author........................... Anh Khoi Do                          */
+/* Create date...................... 2016-02-08                           */
+/* Program's purpose................ This program asks the user to input  */
+/*                                   an option on the screen in order to  */
+/*                                   to display system values.            */
+/* ====================================================================== */
+
+             /* ==================================== */
+             /* Statement: beginning of the program. */
+             /* ==================================== */
+             PGM
+
+             /* =============================================== */
+             /* 1. Declare a file variable that calls a display */
+             /* file named LAB4DF.dspf, which can be found in   */
+             /* source physical file named QDDSSRC.             */
+             /* =============================================== */
+             DCLF       LAB4DF
+
+             /* =============================================== */
+             /* 2. The variable that holds the value of the     */
+             /* user's input (option asked by the program).     */
+             /* =============================================== */
+             DCL        &QCURSYM *CHAR 1
+             DCL        &QPWDMLC TYPE(*CHAR) LEN(3)
+             DCL        &QPWDM *DEC LEN(5 0)
+
+             DCL        &QIPLTYPE TYPE(*CHAR) LEN(1)
+
+             DCL        &PRVSIGN TYPE(*CHAR) LEN(13)
+
+             DCL        &QACTJOB TYPE(*DEC) LEN(5 0)
+             DCL        &QAJCHAR TYPE(*CHAR) LEN(5)
+
+             DCL        &QSRLNBR TYPE(*CHAR) LEN(8)
+
+             DCL        &MSGQLIB TYPE(*CHAR) LEN(10)
+             DCL        &MSGQ TYPE(*CHAR) LEN(10)
+
+             SNDRCVF
+
+
+             /* ============================================= */
+             /* Do while loop: Ask for the user's input while */
+             /* the exit command (F3) is never pressed.       */
+             /* ============================================= */
+             DOWHILE    (&IN03 = '0')
+                SELECT
+
+                   WHEN       (&IN01 = '1') CALL QUSCMDLN
+
+
+                   WHEN       (&OPTION = '1' *OR &OPTION = '01') CALLSUBR +
+                                OPTION1
+
+                   WHEN       (&OPTION = '2' *OR &OPTION = '02') DO
+                      RTVSYSVAL  SYSVAL(QIPLTYPE) RTNVAR(&QIPLTYPE)
+
+                      IF         (&QIPLTYPE = '0') DO
+                      CHGVAR     &OUTMSG ('The IPL type is: unattended +
+                                   IPL.')
+                      ENDDO
+
+                      IF         (&QIPLTYPE = '1') DO
+                         CHGVAR     &OUTMSG ('The IPL type is: attended +
+                                      IPL with dedicated service tools.')
+                      ENDDO
+
+
+                      IF         (&QIPLTYPE = '2') DO
+                         CHGVAR     &OUTMSG ('The IPL type is: attended +
+                                      IPL with console in debug mode.')
+                      ENDDO
+
+
+                   ENDDO
+
+
+
+
+                   WHEN       (&OPTION = '3' *OR &OPTION = '03') DO
+                      RTVUSRPRF  MSGQ(&MSGQ) MSGQLIB(&MSGQLIB)
+
+                      CHGVAR     &OUTMSG ('The message queue is' *BCAT +
+                                   &MSGQLIB *TCAT '/' *TCAT &MSGQ)
+                   ENDDO
+
+                      WHEN       (&OPTION = '4' *OR &OPTION = '04') DO
+                         RTVSYSVAL  SYSVAL(QACTJOB) RTNVAR(&QACTJOB)
+                         CHGVAR     &QAJCHAR &QACTJOB
+                         CHGVAR     &OUTMSG ('Initial number of active +
+                                      jobs:' *BCAT &QAJCHAR)
+                      ENDDO
+
+                      WHEN       (&OPTION = '5' *OR &OPTION= '05') DO
+                         RTVSYSVAL  SYSVAL(QSRLNBR) RTNVAR(&QSRLNBR)
+                         CHGVAR     &OUTMSG ('The serial number is' *CAT +
+                                      &QSRLNBR)
+
+                      ENDDO
+
+
+                      WHEN       (&OPTION = '6' *OR &OPTION = '06') DO
+                         RTVSYSVAL  SYSVAL(QPWDMAXLEN) RTNVAR(&QPWDM)
+                         CHGVAR     &QPWDMLC &QPWDM
+                         CHGVAR     &OUTMSG ('Maximum length of a +
+                                      password:' *CAT &QPWDMLC)
+
+                      ENDDO
+
+
+                      WHEN       (&OPTION = '7' *OR &OPTION = '07') DO
+                         RTVUSRPRF  PRVSIGN(&PRVSIGN)
+                         CHGVAR     &OUTMSG ('Previous sign on:' *BCAT +
+                                      %SST(&PRVSIGN 2 2) *CAT '/' *CAT +
+                                      %SST(&PRVSIGN 4 2) *CAT '/' *CAT +
+                                      %SST(&PRVSIGN 6 2) *BCAT +
+                                      %SST(&PRVSIGN 8 2) *CAT ':' *CAT +
+                                      %SST(&PRVSIGN 10 2) *CAT ':' *CAT +
+                                      %SST(&PRVSIGN 12 2))
+                      ENDDO
+
+
+                      OTHERWISE  DO
+                      CHGVAR     &IN30 '1'
+                      CHGVAR     &OUTMSG ('Error: Option not allowed!')
+                      ENDDO
+
+
+                ENDSELECT
+                SNDRCVF
+             ENDDO
+
+             /* ============================================== */
+             /* The subroutines called by the select statement */
+             /* depending on the value of the user's input.    */
+             /* ============================================== */
+             SUBR       OPTION1
+                RTVSYSVAL  SYSVAL(QCURSYM) RTNVAR(&QCURSYM)
+                CHGVAR     &OUTMSG ('The current currency is set to ' *CAT +
+                             &QCURSYM)
+             ENDSUBR
+
+
+             /* ============================================== */
+             /* End of the program statement                   */
+             /* ============================================== */
+             ENDPGM 
